@@ -1,0 +1,12 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: english-talk-mongo
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:27019:27017"
+    volumes:
+      - english-talk-mongo-data:/data/db
+
+volumes:
+  english-talk-mongo-data:

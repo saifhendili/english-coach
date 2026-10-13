@@ -1,0 +1,173 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/plus-jakarta-sans';
+
+@theme {
+  --font-sans: 'Plus Jakarta Sans Variable', ui-sans-serif, system-ui, sans-serif;
+
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-float-slow: float 9s ease-in-out -3s infinite;
+  --animate-shimmer: shimmer 1.8s linear infinite;
+  --animate-ring: ring 1.6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  @keyframes shimmer {
+    from { background-position: 200% 0; }
+    to { background-position: -200% 0; }
+  }
+  @keyframes ring {
+    0% { transform: scale(1); opacity: 0.55; }
+    100% { transform: scale(1.9); opacity: 0; }
+  }
+}
+
+/* ---- Brand ---- */
+
+@utility bg-brand {
+  background-image: linear-gradient(135deg, #6366f1 0%, #8b5cf6 52%, #d946ef 100%);
+}
+@utility text-brand {
+  background-image: linear-gradient(135deg, #6366f1 0%, #8b5cf6 52%, #d946ef 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+@utility shadow-glow {
+  box-shadow: 0 12px 32px -10px rgb(99 102 241 / 0.65);
+}
+@utility skeleton {
+  background-image: linear-gradient(100deg, transparent 20%, rgb(255 255 255 / 0.55) 50%, transparent 80%);
+  background-size: 200% 100%;
+  animation: var(--animate-shimmer);
+}
+
+/* ---- Base ---- */
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply font-sans text-slate-900 antialiased dark:text-slate-100;
+    background-color: #f6f5ff;
+    background-image:
+      radial-gradient(60rem 38rem at 8% -12%, rgb(99 102 241 / 0.2), transparent 60%),
+      radial-gradient(48rem 34rem at 100% 2%, rgb(217 70 239 / 0.15), transparent 55%),
+      radial-gradient(44rem 30rem at 55% 112%, rgb(56 189 248 / 0.14), transparent 60%);
+    background-attachment: fixed;
+  }
+  @media (prefers-color-scheme: dark) {
+    body {
+      background-color: #090917;
+      background-image:
+        radial-gradient(60rem 38rem at 8% -12%, rgb(99 102 241 / 0.22), transparent 60%),
+        radial-gradient(48rem 34rem at 100% 2%, rgb(217 70 239 / 0.14), transparent 55%),
+        radial-gradient(44rem 30rem at 55% 112%, rgb(56 189 248 / 0.08), transparent 60%);
+    }
+  }
+  ::selection {
+    background: rgb(139 92 246 / 0.3);
+  }
+}
+
+/* ---- Charts ----
+   Colours come from the validated data-viz palette: series 1 blue and 2 orange (checked in both modes,
+   colour-blind separation ΔE ≈ 25, contrast >= 3:1). Text never wears a series colour. */
+.viz-root {
+  --viz-surface: #fcfcfb;
+  --viz-text: #0b0b0b;
+  --viz-text-2: #52514e;
+  --viz-muted: #898781;
+  --viz-grid: #e1e0d9;
+  --viz-axis: #c3c2b7;
+  --viz-border: rgb(11 11 11 / 0.1);
+  --viz-1: #2a78d6;
+  --viz-2: #eb6834;
+  --viz-good: #006300;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  .viz-root {
+    --viz-surface: #1a1a19;
+    --viz-text: #f0efec;
+    --viz-text-2: #c3c2b7;
+    --viz-muted: #898781;
+    --viz-grid: #2c2c2a;
+    --viz-axis: #383835;
+    --viz-border: rgb(255 255 255 / 0.1);
+    --viz-1: #3987e5;
+    --viz-2: #d95926;
+    --viz-good: #0ca30c;
+    color-scheme: dark;
+  }
+}
+
+/* ---- Components ---- */
+
+/* @utility (not @layer components) so the btn-* variants can @apply it. */
+@utility btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3 text-sm font-semibold transition duration-200
+    active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100;
+}
+
+@layer components {
+  .card {
+    @apply rounded-3xl border border-white/70 bg-white/80 p-5 shadow-xl shadow-indigo-500/[0.06] backdrop-blur-xl
+      dark:border-white/[0.07] dark:bg-slate-900/70 dark:shadow-black/20;
+  }
+  .label {
+    @apply mb-1.5 block text-sm font-semibold text-slate-700 dark:text-slate-300;
+  }
+  .hint {
+    @apply mt-1.5 text-xs leading-relaxed text-slate-500 dark:text-slate-400;
+  }
+  .input {
+    @apply w-full rounded-2xl border border-slate-200 bg-white/90 px-4 py-3 text-base outline-none transition
+      placeholder:text-slate-400 focus:border-violet-400 focus:ring-4 focus:ring-violet-500/15
+      dark:border-slate-700 dark:bg-slate-950/60 dark:focus:border-violet-500;
+  }
+  .btn-primary {
+    @apply btn bg-brand text-white shadow-glow hover:brightness-110;
+  }
+  .btn-ghost {
+    @apply btn border border-slate-200 bg-white/70 text-slate-700 hover:bg-white
+      dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-200 dark:hover:bg-slate-800;
+  }
+  .btn-danger {
+    @apply btn border border-rose-200 bg-rose-50/70 text-rose-700 hover:bg-rose-50
+      dark:border-rose-900 dark:bg-rose-950/40 dark:text-rose-300 dark:hover:bg-rose-950;
+  }
+  .chart-card {
+    @apply rounded-3xl p-5 shadow-xl shadow-indigo-500/[0.06];
+    background: var(--viz-surface);
+    border: 1px solid var(--viz-border);
+    color: var(--viz-text);
+  }
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full bg-violet-100 px-2.5 py-1 text-xs font-semibold text-violet-700
+      dark:bg-violet-500/15 dark:text-violet-300;
+  }
+  .option {
+    @apply flex w-full items-center gap-3.5 rounded-2xl border-2 border-slate-200/80 bg-white/70 p-4 text-left font-medium
+      transition duration-150 hover:border-violet-300 hover:bg-white active:scale-[0.99]
+      dark:border-slate-700 dark:bg-slate-900/60 dark:hover:border-violet-500/70 dark:hover:bg-slate-900;
+  }
+  .option[aria-checked='true'] {
+    @apply border-violet-500 bg-violet-50 ring-4 ring-violet-500/15 dark:bg-violet-500/10;
+  }
+  /* The gap in a grammar question: "She ____ to school" */
+  .blank {
+    @apply mx-1 inline-block h-6 w-20 translate-y-1.5 rounded-lg border-b-4 border-violet-400 bg-violet-100/80
+      dark:border-violet-500 dark:bg-violet-500/15;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
