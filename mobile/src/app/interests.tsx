@@ -1,7 +1,7 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { KeyboardAvoidingView, Platform, Pressable, View } from 'react-native';
+import { KeyboardAvoidingView, Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AppText, Button, Card, ErrorBanner, Icon, Loading, Screen, TextField } from '@/components/ui';
 import { useInterests, useSaveInterests, useSuggestFields } from '@/hooks/useInterests';
@@ -141,7 +141,7 @@ function InterestsForm({ data }: { data: InterestsData }) {
   const suggestedNow = !data.saved ? new Set(data.suggestedFocus) : new Set<string>();
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1, backgroundColor: colors.bg }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+    <KeyboardAvoidingView style={{ flex: 1, backgroundColor: colors.bg }} behavior="padding">
       <Screen bottom={24}>
         <View style={{ gap: 2 }}>
           <AppText variant="title">Make it yours</AppText>

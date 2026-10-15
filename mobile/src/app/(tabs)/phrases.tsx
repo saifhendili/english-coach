@@ -94,7 +94,7 @@ export default function Phrases() {
 
   return (
     <Screen top>
-      <ScreenHeader title="Power phrases" subtitle="Natural expressions to use again and again. Save them, say them, practise them." />
+      <ScreenHeader title="Power phrases" subtitle="Natural expressions to use again and again. Save them, say them, practise them." help="phrases" />
       <Segmented<Tab>
         label="Phrases"
         value={tab}

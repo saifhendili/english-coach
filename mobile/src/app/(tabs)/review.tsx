@@ -149,7 +149,7 @@ export default function Review() {
 
   return (
     <Screen top refreshing={s.summary.isRefetching} onRefresh={() => void s.summary.refetch()}>
-      <ScreenHeader title="Review" subtitle="Spaced repetition for what you saved and got wrong." />
+      <ScreenHeader title="Review" subtitle="Spaced repetition for what you saved and got wrong." help="review" />
       <Start summary={s.summary.data} onStart={() => void s.start()} loading={s.loading} error={s.loadError} />
     </Screen>
   );

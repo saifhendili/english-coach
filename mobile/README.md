@@ -36,7 +36,7 @@ Linux has no Xcode, so builds run in Expo's cloud (EAS). You need an
 
 1. Change `ios.bundleIdentifier` in `app.json` (it is the placeholder `com.englishcoach.app`) to one you own, and the
    `name`/`slug` if you like. Replace `assets/images/icon.png` (1024 px, no transparency) if you want a different icon.
-2. **Host the API over HTTPS** (a domain with a certificate). iOS only allows plain `http` to the local network, which is
+2. **Host the API over HTTPS** (a domain with a certificate; the repository's `render.yaml` and the root README's *Deploy the API on Render* section do this). iOS only allows plain `http` to the local network, which is
    what Expo Go development uses (`NSAllowsLocalNetworking` in `app.json`); a store build cannot call `http://192.168…`.
    In the installed app, type the HTTPS address in the sign-in screen's **Server** box.
 3. Then:
@@ -58,7 +58,7 @@ Linux has no Xcode, so builds run in Expo's cloud (EAS). You need an
 ## Develop
 
 ```bash
-npm test             # Jest: 128 tests (API/stream parsing, voice recording, review logic, chat turns, placement flow, tense answer checking and practice sessions, charts...)
+npm test             # Jest: 163 tests (API/stream parsing, voice recording, review logic, chat turns, placement flow, tense answer checking and practice sessions, charts...)
 npm run typecheck    # tsc --noEmit, strict
 npx eslint src       # includes the React Compiler rules
 npx expo-doctor      # dependency and config check
@@ -84,9 +84,71 @@ Where things are:
 One navigation rule: a stack screen that returns to a tab (results pages, "Save & see topics"...) uses `router.dismissTo('/tab')`, not
 `router.navigate`, which would stack a second copy of the tabs on top of the screen it was meant to leave.
 
+## The in-app guide (every level, three languages)
+
+The app itself is in English, so a beginner could not even read the first screen. The **Guide** explains every step in simple
+English, French and Arabic (Arabic reads right to left). It opens from:
+
+- the sign-in screen ("How does it work?", works before you have an account),
+- a card on Home for new learners (title in all three languages; "Not now" hides it for good),
+- Settings → Guide, and a **?** button in the header of Topics, Chat, Grammar, Phrases and Review, which opens the guide at that
+  part,
+- the level test screen ("How the test works").
+
+It has 16 sections: what the app is, the 3 set-up steps, **how to get the free Gemini key step by step** (with a button to Google
+AI Studio), the level test and what A1 to C2 mean, interests, chat (what the corrections and the "Sound more natural" cards
+are), voice, grammar, phrases, review (the four buttons), topics, progress, settings, **a daily plan for each of the six levels**
+(pick A1 to C2: what to do in 10 to 30 minutes, and a goal), a glossary of the app's buttons translated, and a help section
+(cannot connect, key, daily limit, microphone, no sound, forgot password).
+
+- The guide opens in the language the learner last chose, else the phone's language, else the coach's language. A card offers one
+  tap to make the coach explain mistakes in that language (it is French by default on the server).
+- The text is data in `src/guide/content.ts`. `src/guide/__tests__` checks that every text exists in all three languages, that the
+  Arabic is Arabic script, and that **every quoted button or screen name in the guide really exists in the app**, so the guide cannot
+  quietly go out of date when a label changes.
+- The French and Arabic were written by the assistant that built the app. Have a native speaker read them once.
+
+## Android APK
+
+The same app builds for Android. An installable APK is made on this computer, without an Expo account:
+
+```bash
+cd mobile
+EXPO_PUBLIC_API_URL=http://192.168.1.9:4000 npm run apk     # use your computer's address
+```
+
+It writes `builds/english-coach-1.0.0.apk` (about 80 MB; add `ABIS=arm64-v8a` for a ~45 MB one that fits modern phones only). The
+first build downloads Gradle and compiles the native code (10 to 15 minutes); later ones take about a minute.
+It needs JDK 17+ and the Android SDK (`ANDROID_HOME`, default `~/Android/Sdk`; platform 36, build-tools 36.0.0,
+NDK 27.1.12297006, CMake 3.22.1). `CLEAN=1 npm run apk` regenerates the native `android/` folder after a change to `app.json`
+or a plugin. `android/` and `builds/` are generated and not committed; never edit `android/` by hand.
+
+To install: copy the `.apk` to the phone (USB, a cloud drive, or `adb install builds/english-coach-1.0.0.apk`), open it, and
+allow "install unknown apps" for the app you opened it from. Play Protect may warn about an app that is not from the Play Store:
+choose "Install anyway".
+
+- **The server address.** The build starts with the `EXPO_PUBLIC_API_URL` you gave it. Without one it asks on first start.
+  Either way it can be changed on the sign-in screen (Server). The phone must reach the computer (same Wi-Fi, and the computer's
+  firewall must allow port 4000).
+- **Plain http is allowed** (`usesCleartextTraffic` in `app.json`) because the server on your own network has no certificate.
+  For a build that talks only to an https server, set it to `false`.
+- **Signed with the debug key**, which is fine for your own phone but not accepted by the Play Store. For the Play Store run
+  `npx eas-cli@latest build --platform android --profile production` (an `.aab`, signed by EAS), after an `https` server exists.
+  `--profile preview` makes an APK in Expo's cloud instead.
+- **Permissions:** internet, microphone (voice input), and the audio-playback and vibration ones Expo's audio and haptics need.
+  Storage and "draw over other apps" are blocked.
+- Android specifics already handled: the app draws behind the status and navigation bars (padding for both), the keyboard no
+  longer covers the field being typed in (`KeyboardAvoidingView` with `padding` everywhere), and the chat follows the newest
+  text. Adaptive and themed icons are in `assets/images/android-icon-*.png` (made from the app's chat-bubble logo).
+
+Tested on an Android 17 emulator (x86_64, 16 KB memory pages) against the real server: sign-in over http, Home, the Grammar
+lessons and practice with the keyboard open, a streamed chat with corrections, and the word sheet. **Not tested on a physical
+phone**: the arm64 and 32-bit libraries are built and 16 KB-aligned but have not run, and neither has real microphone recording,
+read-aloud sound, or vibration (the emulator had no audio).
+
 ## What is and is not verified
 
-Checked here: type checking, ESLint, 128 unit tests, `expo-doctor` (21/21), a production iOS bundle export, and every screen
+Checked here: type checking, ESLint, 163 unit tests, `expo-doctor` (21/21), a production iOS bundle export, and every screen
 in the web build against the real server and real Gemini (chat with streaming and corrections, topics, phrases, review,
 progress, placement, grammar, settings).
 

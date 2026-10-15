@@ -5,9 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "node --watch --env-file=.env src/index.js",
-    "start": "node --env-file=.env src/index.js",
+    "start": "node --env-file-if-exists=.env src/index.js",
     "test": "node --test \"src/**/*.test.js\"",
     "check-models": "node --env-file=.env scripts/check-models.js"
+  },
+  "engines": {
+    "node": ">=22.9 <25"
   },
   "dependencies": {
     "@google/genai": "^2.28.0",

@@ -1,6 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { router, type Href } from 'expo-router';
 import { Pressable, View } from 'react-native';
+import { GuideCallout } from '@/components/guide/GuideCallout';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { AppText, Button, Card, GradientCard, Icon, LevelBadge, Loading, Screen, type IconName } from '@/components/ui';
 import { useInterests } from '@/hooks/useInterests';
@@ -91,6 +92,8 @@ export default function Home() {
   return (
     <Screen top onRefresh={refresh} refreshing={settings.isRefetching}>
       <ScreenHeader title="English Coach" brand />
+
+      {!level ? <GuideCallout /> : null}
 
       <GradientCard>
         {hero ? (

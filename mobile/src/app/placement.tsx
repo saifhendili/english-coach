@@ -1,4 +1,5 @@
 import { LinearGradient } from 'expo-linear-gradient';
+import { router } from 'expo-router';
 import { Pressable, View } from 'react-native';
 import { Thinking } from '@/components/placement/Thinking';
 import { QuestionView } from '@/components/placement/QuestionView';
@@ -54,6 +55,11 @@ function Intro({ error, onStart, onShowLast }: { error: Error | null; onStart: (
             don’t guess. If you really don’t know, choose “I don’t know”. It gives a more accurate result. Speaking questions use your microphone, and you can edit what it hears before sending.
           </AppText>
         </View>
+
+        <Pressable onPress={() => router.push({ pathname: '/guide', params: { section: 'level' } })} accessibilityRole="button" accessibilityLabel="How the level test works, in English, French and Arabic" hitSlop={8} style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          <Icon name="help-circle-outline" size={20} color="primaryText" />
+          <AppText variant="small" weight="700" color="primaryText">How the test works · Comment ça marche ? · كيف يعمل الاختبار؟</AppText>
+        </Pressable>
 
         <ErrorBanner error={error ?? status.error} onRetry={onStart} />
 

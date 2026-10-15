@@ -67,7 +67,7 @@ export default function Grammar() {
 
   return (
     <Screen top refreshing={isRefetching} onRefresh={() => void refetch()}>
-      <ScreenHeader title="Grammar" subtitle="Learn each verb tense, then practise it until it sticks." />
+      <ScreenHeader title="Grammar" subtitle="Learn each verb tense, then practise it until it sticks." help="grammar" />
 
       <GradientCard>
         {rec ? (

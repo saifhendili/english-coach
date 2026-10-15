@@ -88,7 +88,7 @@ export default function Topics() {
 
   return (
     <Screen top onScroll={onScroll} refreshing={topics.isRefetching && !busy} onRefresh={() => void topics.refetch()}>
-      <ScreenHeader title="Topics" subtitle="Fresh conversation ideas, made for you." />
+      <ScreenHeader title="Topics" subtitle="Fresh conversation ideas, made for you." help="topics" />
 
       {noLevel ? (
         <Pressable onPress={() => router.push('/placement')} accessibilityRole="button" style={{ padding: 14, borderRadius: 18, backgroundColor: colors.warnSoft }}>

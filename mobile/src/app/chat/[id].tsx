@@ -88,7 +88,10 @@ export default function Conversation() {
     scroller.current?.scrollTo({ y: 0, animated: false });
   }, [ended]);
 
-  const onScroll = useCallback((e: NativeSyntheticEvent<NativeScrollEvent>) => {
+  // Follow the new text, unless the learner scrolled up to read. Whether they are "at the bottom" is judged only when their
+  // finger lifts (or the fling ends): scroll events also fire when the content merely grows, and on Android one of those
+  // arrives before the scroll-to-end and would wrongly detach the view from the bottom.
+  const atBottom = useCallback((e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const { contentOffset, contentSize, layoutMeasurement } = e.nativeEvent;
     stick.current = contentSize.height - contentOffset.y - layoutMeasurement.height < 120;
   }, []);
@@ -169,7 +172,7 @@ export default function Conversation() {
   const failed = turn.error;
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1, backgroundColor: colors.bg }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+    <KeyboardAvoidingView style={{ flex: 1, backgroundColor: colors.bg }} behavior="padding">
       {header}
 
       <ScrollView
@@ -178,8 +181,11 @@ export default function Conversation() {
         contentContainerStyle={{ padding: 16, gap: 16 }}
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="interactive"
-        onScroll={onScroll}
-        scrollEventThrottle={64}
+        onScrollBeginDrag={() => {
+          stick.current = false; // the learner took hold of the page
+        }}
+        onScrollEndDrag={atBottom}
+        onMomentumScrollEnd={atBottom}
         onContentSizeChange={() => stick.current && scroller.current?.scrollToEnd({ animated: false })}
       >
         {data.scenario ? (

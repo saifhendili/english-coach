@@ -1,3 +1,4 @@
+import { watchSlow } from '@/lib/slow';
 import { getServer, useAuth } from '@/store/auth';
 
 export class ApiError extends Error {
@@ -34,7 +35,9 @@ export function networkError(): ApiError {
     0,
     'NETWORK',
     server
-      ? `Cannot reach the server at ${server}. Is it running, and is your phone on the same Wi-Fi?`
+      ? /^https:/i.test(server)
+        ? `Cannot reach the server at ${server}. Check your internet connection. If the server was asleep it needs about a minute to wake up: wait a little and try again.`
+        : `Cannot reach the server at ${server}. Is it running, and is your phone on the same Wi-Fi?`
       : 'No server address is set. Open Server settings on the sign-in screen and enter your computer’s address.',
   );
 }
@@ -51,7 +54,7 @@ export function errorFrom(status: number, statusText: string, data: { error?: Er
 async function request<T>(path: string, init: RequestInit, token: string | null): Promise<T> {
   let res: Response;
   try {
-    res = await fetch(apiUrl(path), init);
+    res = await watchSlow(() => fetch(apiUrl(path), init));
   } catch {
     throw networkError();
   }

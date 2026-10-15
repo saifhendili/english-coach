@@ -13,6 +13,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { ServerWaking } from '@/components/ServerWaking';
 import { ApiError, hooks } from '@/lib/api';
 import { useAuth } from '@/store/auth';
 import { FONT, useTheme } from '@/theme';
@@ -70,6 +71,7 @@ export default function RootLayout() {
       <QueryClientProvider client={queryClient}>
         <ThemeProvider value={navTheme}>
           <StatusBar style={dark ? 'light' : 'dark'} />
+          <ServerWaking />
           <Stack
             screenOptions={{
               headerShadowVisible: false,
@@ -96,6 +98,9 @@ export default function RootLayout() {
             <Stack.Protected guard={!token}>
               <Stack.Screen name="login" options={{ headerShown: false }} />
             </Stack.Protected>
+            {/* The guide works signed in or out. It comes after the sign-in screen on purpose: the app starts on the first screen
+                that is available, which signed out must be the sign-in screen. */}
+            <Stack.Screen name="guide" options={{ title: 'Guide' }} />
           </Stack>
         </ThemeProvider>
       </QueryClientProvider>

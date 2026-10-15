@@ -5,8 +5,9 @@ import { config } from './config.js';
 import { errorHandler, notFound } from './middleware/errors.js';
 import routes from './routes/index.js';
 
-export function createApp() {
+export function createApp({ trustProxy = config.trustProxy } = {}) {
   const app = express();
+  app.set('trust proxy', trustProxy);
   app.use(helmet());
   app.use(cors({ origin: config.clientOrigins }));
   app.use(express.json({ limit: '1mb' }));

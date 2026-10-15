@@ -186,6 +186,7 @@ export default function Settings() {
       <Card style={{ gap: 12 }}>
         <SectionTitle icon="person-circle-outline" title="Account" sub={data?.email ?? email ?? ''} />
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
+          <Button title="Guide · Aide · دليل" icon="book-outline" variant="soft" size="sm" accessibilityLabel="Open the guide" onPress={() => router.push('/guide')} />
           <Button title="Retake the level test" icon="trophy-outline" variant="soft" size="sm" onPress={() => router.push('/placement')} />
           <Button title="Sign out" icon="log-out-outline" variant="ghost" size="sm" onPress={signOut} />
         </View>

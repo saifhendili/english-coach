@@ -1,0 +1,25 @@
+# Render Blueprint: the English Coach API.  https://render.com/docs/blueprint-spec
+# The database is MongoDB Atlas (Render has no MongoDB): you paste its address when Render asks for MONGODB_URI.
+services:
+  - type: web
+    name: english-coach-api
+    runtime: node
+    region: frankfurt # closest to Europe and North Africa; oregon, ohio, virginia and singapore also exist
+    plan: free # sleeps after 15 minutes without traffic and takes about a minute to wake up
+    rootDir: server
+    buildCommand: npm ci
+    # `node` directly (not `npm start`): a stop signal sent to npm does not reach the server, so it could not shut down cleanly.
+    startCommand: node src/index.js
+    healthCheckPath: /api/health
+    autoDeployTrigger: commit
+    envVars:
+      - key: NODE_VERSION
+        value: "24"
+      - key: TRUST_PROXY # Render's proxy sits in front of the server: without this all users would share one login limit
+        value: "1"
+      - key: MONGODB_URI # asked for once, when the Blueprint is created
+        sync: false
+      - key: ENCRYPTION_KEY # 64 hex characters: openssl rand -hex 32. Never change it later (saved Gemini keys become unreadable).
+        sync: false
+      - key: JWT_SECRET # any long random text; Render makes one
+        generateValue: true

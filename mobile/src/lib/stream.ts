@@ -1,5 +1,6 @@
 import { fetch as streamingFetch } from 'expo/fetch';
 import { ApiError, apiUrl, errorFrom, networkError } from '@/lib/api';
+import { watchSlow } from '@/lib/slow';
 import { useAuth } from '@/store/auth';
 
 // POST that answers with Server-Sent Events. React Native's old fetch could not read a response as it arrives;
@@ -14,12 +15,14 @@ export async function streamPost(
   const token = useAuth.getState().token;
   let res: Awaited<ReturnType<typeof streamingFetch>>;
   try {
-    res = await streamingFetch(apiUrl(path), {
-      method: 'POST',
-      headers: { 'content-type': 'application/json', ...(token && { authorization: `Bearer ${token}` }) },
-      body: JSON.stringify(body),
-      signal,
-    });
+    res = await watchSlow(() =>
+      streamingFetch(apiUrl(path), {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', ...(token && { authorization: `Bearer ${token}` }) },
+        body: JSON.stringify(body),
+        signal,
+      }),
+    );
   } catch (err) {
     if ((err as Error).name === 'AbortError') throw err;
     throw networkError();

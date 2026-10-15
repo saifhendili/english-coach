@@ -2,8 +2,9 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import type { SettingsData, SettingsPatch } from '@/types';
 
-export function useSettings() {
-  return useQuery({ queryKey: ['settings'], queryFn: () => api<SettingsData>('/settings') });
+// `enabled: false` for screens that can be open before sign-in (the guide).
+export function useSettings(enabled = true) {
+  return useQuery({ queryKey: ['settings'], queryFn: () => api<SettingsData>('/settings'), enabled });
 }
 
 export function useUpdateSettings() {

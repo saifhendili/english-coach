@@ -1,3 +1,5 @@
+import { parseTrustProxy } from './services/trust-proxy.js';
+
 function required(name) {
   const value = process.env[name];
   if (!value) throw new Error(`Missing env var ${name} (see server/.env.example)`);
@@ -11,6 +13,8 @@ if (!/^[0-9a-fA-F]{64}$/.test(encryptionKey)) {
 
 export const config = {
   port: Number(process.env.PORT || 4000),
+  // Reverse proxies in front of the server: 1 on Render, 0 (the default) when it is reached directly.
+  trustProxy: parseTrustProxy(process.env.TRUST_PROXY),
   mongoUri: required('MONGODB_URI'),
   jwtSecret: required('JWT_SECRET'),
   encryptionKey: Buffer.from(encryptionKey, 'hex'),

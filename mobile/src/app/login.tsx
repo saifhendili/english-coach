@@ -1,10 +1,12 @@
 import { useMutation } from '@tanstack/react-query';
 import { LinearGradient } from 'expo-linear-gradient';
+import { router } from 'expo-router';
 import { useState } from 'react';
-import { KeyboardAvoidingView, Platform, Pressable, ScrollView, View } from 'react-native';
+import { KeyboardAvoidingView, Pressable, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ServerBox } from '@/components/ServerBox';
-import { AppText, Button, Card, ErrorBanner, Logo, TextField } from '@/components/ui';
+import { AppText, Button, Card, ErrorBanner, Icon, Logo, TextField } from '@/components/ui';
+import { LOGIN_LINK } from '@/guide/strings';
 import { api, apiUrl } from '@/lib/api';
 import { getServer, useAuth } from '@/store/auth';
 import { BRAND, useTheme } from '@/theme';
@@ -45,8 +47,8 @@ export default function Login() {
   const unreachable = auth.error && 'code' in auth.error && (auth.error as { code: string }).code === 'NETWORK';
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1, backgroundColor: colors.bg }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+    <KeyboardAvoidingView style={{ flex: 1, backgroundColor: colors.bg }} behavior="padding">
+      <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: insets.bottom }} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
         <LinearGradient colors={BRAND} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ paddingTop: insets.top + 28, paddingBottom: 30, paddingHorizontal: 24, borderBottomLeftRadius: 36, borderBottomRightRadius: 36 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
             <Logo size={44} />
@@ -83,6 +85,11 @@ export default function Login() {
             <AppText weight="700" color="primaryText" style={{ textAlign: 'center' }}>
               {mode === 'login' ? 'No account yet? Create one' : 'Already have an account? Sign in'}
             </AppText>
+          </Pressable>
+
+          <Pressable onPress={() => router.push('/guide')} accessibilityRole="button" accessibilityLabel={`How does it work? ${LOGIN_LINK.fr}. ${LOGIN_LINK.ar}`} hitSlop={8} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 6 }}>
+            <Icon name="book-outline" size={18} color="primaryText" />
+            <AppText variant="small" weight="700" color="primaryText">{LOGIN_LINK.en} · {LOGIN_LINK.fr} · {LOGIN_LINK.ar}</AppText>
           </Pressable>
 
           <ServerBox forceOpen={Boolean(unreachable) || !getServer()} />

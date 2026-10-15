@@ -63,7 +63,7 @@ export default function Chat() {
 
   return (
     <Screen top refreshing={sessions.isRefetching} onRefresh={refresh}>
-      <ScreenHeader title="Chat" />
+      <ScreenHeader title="Chat" help="chat" />
 
       <GradientCard>
         <Icon name="chatbubbles" size={34} color="#fff" />

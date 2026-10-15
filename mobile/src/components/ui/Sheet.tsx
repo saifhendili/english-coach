@@ -1,4 +1,4 @@
-import { KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, View } from 'react-native';
+import { KeyboardAvoidingView, Modal, Pressable, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '@/theme';
 import { Icon } from './Icon';
@@ -8,9 +8,9 @@ export function Sheet({ visible, onClose, children, label }: { visible: boolean;
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose} accessibilityViewIsModal>
+    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose} accessibilityViewIsModal statusBarTranslucent navigationBarTranslucent>
       {/* With the keyboard up, the panel rises above it instead of being covered. */}
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1, justifyContent: 'flex-end' }}>
+      <KeyboardAvoidingView behavior="padding" style={{ flex: 1, justifyContent: 'flex-end' }}>
         <Pressable accessibilityLabel="Close" onPress={onClose} style={{ position: 'absolute', inset: 0, backgroundColor: colors.overlay }} />
         <View
           accessibilityLabel={label}
