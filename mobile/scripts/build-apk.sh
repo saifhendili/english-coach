@@ -23,6 +23,13 @@ if [ ! -d android ] || [ "${CLEAN:-}" = "1" ]; then
   sed -i 's#"ios": "expo run:ios"#"ios": "expo start --ios"#' package.json
 fi
 
+# EXPO_PUBLIC_API_URL is written into the JavaScript bundle, but neither Gradle nor Metro treat the variable as an input, so both
+# would reuse an old bundle (and so the old address). Deleting the bundle makes Gradle build it again, and a private temporary
+# folder gives Metro an empty cache (it keeps its cache in the temp folder; the cache of a running `expo start` is left alone).
+rm -rf android/app/build/generated/assets/react
+export TMPDIR="$(mktemp -d)"
+trap 'rm -rf "$TMPDIR"' EXIT
+
 (cd android && CI=1 ./gradlew assembleRelease \
   -PreactNativeArchitectures="${ABIS:-arm64-v8a,armeabi-v7a,x86_64}" \
   -Dorg.gradle.jvmargs="-Xmx3g -XX:MaxMetaspaceSize=768m" --console=plain)

@@ -22,7 +22,7 @@ Sign up in the app, then paste your Gemini key in Settings. It is stored encrypt
 
 `mobile/` is a React Native (Expo) client for the same API with every feature of the web app. Try it free on an iPhone with
 Expo Go (`cd mobile && npm install && npx expo start`, scan the QR code), or build it for TestFlight/the App Store with EAS.
-An Android APK is built the same way (`cd mobile && npm run apk`). The app has a built-in guide for beginners in English, French and Arabic. Steps, what is verified and what is not: [mobile/README.md](mobile/README.md). To use it away from home, [deploy the API on Render](#deploy-the-api-on-render).
+An Android APK is built the same way (`cd mobile && npm run apk`). To put the app on an iPhone without Expo Go and for free (it must be re-installed every 7 days), see "Install on an iPhone for free" in [mobile/README.md](mobile/README.md). The app has a built-in guide for beginners in English, French and Arabic. Steps, what is verified and what is not: [mobile/README.md](mobile/README.md). To use it away from home, [deploy the API on Render](#deploy-the-api-on-render).
 
 ## Layout
 

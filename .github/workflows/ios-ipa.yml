@@ -1,0 +1,70 @@
+# Builds the iPhone app into an UNSIGNED .ipa on a free GitHub macOS machine (free for public repositories), so no Mac and no
+# Apple Developer account ($99) are needed. The file is signed afterwards, on your own computer, with a free Apple ID: see
+# "Install on an iPhone for free" in mobile/README.md.
+#
+# Run it by hand: GitHub -> Actions -> "Build iPhone app (unsigned)" -> Run workflow. When it is green (about 20-30 minutes),
+# download the artifact "english-coach-ipa" from the run page (it is a zip with english-coach.ipa inside).
+name: Build iPhone app (unsigned)
+
+on:
+  workflow_dispatch:
+    inputs:
+      api_url:
+        description: Address of the API the app starts with (it can still be changed on the sign-in screen)
+        required: true
+        default: https://english-coach-wfgq.onrender.com
+
+jobs:
+  ipa:
+    runs-on: macos-26
+    timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: mobile
+    env:
+      EXPO_PUBLIC_API_URL: ${{ inputs.api_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+
+      - run: npm ci
+
+      # Creates mobile/ios from app.json (it is generated, never committed), then installs the native libraries (CocoaPods).
+      - run: npx expo prebuild --platform ios --no-install
+      - run: pod install
+        working-directory: mobile/ios
+
+      # No signing here: Apple's signing is done later by the tool that installs the app on the phone.
+      - name: Build (Release, for a real iPhone)
+        run: |
+          set -eo pipefail
+          xcodebuild \
+            -workspace ios/EnglishCoach.xcworkspace \
+            -scheme EnglishCoach \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
+            build
+
+      - name: Pack the .ipa
+        run: |
+          set -eo pipefail
+          rm -rf Payload english-coach.ipa
+          mkdir Payload
+          cp -R build/Build/Products/Release-iphoneos/EnglishCoach.app Payload/
+          zip -qr english-coach.ipa Payload
+          ls -lh english-coach.ipa
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: english-coach-ipa
+          path: mobile/english-coach.ipa
+          retention-days: 14
+          if-no-files-found: error

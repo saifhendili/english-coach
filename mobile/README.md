@@ -29,6 +29,30 @@ blocking port 4000 (API) or 8081 (Expo).
 
 First run: create an account, then **Settings → Gemini API key** (a free key from Google AI Studio).
 
+## Install on an iPhone for free (no Expo Go, no Mac, no $99)
+
+Expo Go needs the computer and the same Wi-Fi. To get a real app icon on the phone that works anywhere, with only a free Apple ID:
+
+**Apple's limit, which nothing free can remove:** an app signed with a free Apple ID **stops opening after 7 days**. You install it again
+the same way (your account and data are on the server, so nothing is lost). A free ID can also hold only 3 such apps at once. Only the paid
+Apple Developer Program ($99/year, TestFlight below) avoids this.
+
+1. **Build the file.** There is no Mac here, so a free GitHub macOS machine builds it
+   ([`.github/workflows/ios-ipa.yml`](../.github/workflows/ios-ipa.yml); free because the repository is public). Push the repository,
+   open GitHub → **Actions** → **Build iPhone app (unsigned)** → **Run workflow** (leave the API address as it is). After 20-30 minutes
+   download the artifact `english-coach-ipa`, unzip it, and you have `english-coach.ipa`. It is not signed yet, so it cannot be installed yet.
+2. **Allow your own apps on the phone.** iPhone → Settings → Privacy & Security → **Developer Mode** → On (the phone restarts).
+3. **Sign and install from the computer.** Connect the iPhone by USB and use a tool that signs with a free Apple ID and installs. On Linux,
+   [Sideloader](https://github.com/Dadoum/Sideloader) does this: `sideloader install english-coach.ipa -i` (follow its README for setup
+   and the pairing file; it asks for the Apple ID). Use a spare Apple ID rather than your main one, because the tool asks for the password
+   (it goes to Apple only, but it is a third-party tool). Windows/macOS users can use AltStore or Sideloadly.
+4. **Trust it.** iPhone → Settings → General → **VPN & Device Management** → your Apple ID → Trust. Then open **English Coach**.
+5. **Every 7 days**, repeat step 3 with the same file (no need to rebuild). SideStore can re-sign on the phone itself, so the computer is
+   needed less often; see its documentation.
+
+Not tested: nobody has run this workflow or installed the result yet (there is no Mac or iPhone on the machine that wrote it). If the build
+fails, the log of the failed step on the Actions page says why.
+
 ## Put it on the App Store / TestFlight
 
 Linux has no Xcode, so builds run in Expo's cloud (EAS). You need an
